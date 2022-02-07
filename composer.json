@@ -1,0 +1,25 @@
+{
+    "name": "shahburhan/owa",
+    "description": "Laravel Package for object oriented design with actions",
+    "type": "library",
+    "license": "MIT",
+    "authors": [{
+        "name": "Burhan Shah",
+        "email": "sb.shahburhan@gmail.com"
+    }],
+    "minimum-stability": "dev",
+    "prefer-stable": false,
+    "require": {
+        "php": "^7.2.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "ShahBurhan\\OWA\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["ShahBurhan\\OWA\\OWAServiceProvider"]
+        }
+    }
+}
