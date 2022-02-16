@@ -65,7 +65,12 @@ abstract class Action
      */
     public static function isValidAction($class, $arguments)
     {
-        if (class_exists($class)) {
+        $hasActionSuffix = false;
+
+        if (class_exists($class) || $hasActionSuffix = class_exists($class . "Action")) {
+
+            $class = ($hasActionSuffix) ? $class . "Action" :  $class;
+
             return static::action(new $class, $arguments);
         } else {
             throw ActionNotFoundException::missingClass($class);
@@ -91,7 +96,7 @@ abstract class Action
      */
     public static function getActionClass($name)
     {
-        $class = static::$namespace . "\{object}\Actions\{action}Action";
+        $class = static::$namespace . "\{object}\Actions\{action}";
 
         list($object, $action) = static::resolveObjectAction($name);
 
@@ -136,9 +141,10 @@ abstract class Action
         foreach ($possibleMatches[0] as $k => $possibleObject) {
 
             $ObjectAction = [$possibleObject, $possibleMatches[1][$k]];
-            $class = static::$namespace . "\\" . $possibleObject . "\Actions\\" . $possibleMatches[1][$k] . "Action";
 
-            if (class_exists($class)) {
+            $class = static::$namespace . "\\" . $possibleObject . "\Actions\\" . $possibleMatches[1][$k];
+
+            if (class_exists($class) || class_exists($class . "Action")) {
                 return $ObjectAction;
             }
         }
