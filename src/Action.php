@@ -2,8 +2,7 @@
 
 namespace ShahBurhan\OWA;
 
-
-use ShahBurhan\OWA\ActionNotFoundException;
+use ShahBurhan\OWA\Exceptions\ActionNotFoundException;
 
 abstract class Action
 {
@@ -19,7 +18,7 @@ abstract class Action
      *
      * @var string
      */
-    public static $namespace = '\App\Objects';
+    public static $namespace = null;
 
     /**
      * Abstract method to be implemented by child Action
@@ -39,6 +38,8 @@ abstract class Action
      */
     public static function __callStatic($name, $arguments)
     {
+        static::$namespace = config('owa.namespace');
+
         static::setAvailableObjects();
 
         return static::isValidAction(static::getActionClass($name), $arguments);
