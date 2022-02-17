@@ -1,20 +1,11 @@
 <?php
 
-namespace ShahBurhan\LaravelPaypal;
+namespace ShahBurhan\OWA;
 
 use Illuminate\Support\ServiceProvider;
 
 class OWAServiceProvider extends ServiceProvider
 {
-    /**
-     * Publishes configuration file.
-     *
-     * @return  void
-     */
-    public function boot()
-    {
-    }
-
     /**
      * Make config publishment optional by merging the config from the package.
      *
@@ -22,5 +13,15 @@ class OWAServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom($this->configPath(), 'owa');
+    }
+    /**
+     * Return default config path
+     *
+     * @return void
+     */
+    protected function configPath()
+    {
+        return __DIR__ . '/../config/owa.php';
     }
 }

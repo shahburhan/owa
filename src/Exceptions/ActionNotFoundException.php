@@ -21,12 +21,14 @@ class ActionNotFoundException extends Exception
     }
     public static function missingClass($class)
     {
+        return new static($class, static::getErrorMessage($class));
+    }
+    public static function getErrorMessage($class)
+    {
+        $name = explode('\\', $class);
+        $name = rtrim(end($name), 'Action');
 
-        $action = explode('\\', $class);
-
-        $message = end($action) . " not found. Please check for wrong spelling";
-
-        return new static($class, $message);
+        return $name . " action not found. Please check for wrong spelling";
     }
     public static function invalidNameSyntax($class)
     {
