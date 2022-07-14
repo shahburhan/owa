@@ -1,5 +1,6 @@
 <?php
 
 return [
-    'namespace' => 'App\Objects'
+    'namespace' => 'App\Objects',
+    'directory' => 'app/Objects'
 ];
