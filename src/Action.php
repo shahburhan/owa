@@ -21,13 +21,20 @@ abstract class Action
     public static $namespace = null;
 
     /**
+     * Default directory for all objects
+     *
+     * @var string
+     */
+    public static $directory = null;
+
+    /**
      * Abstract method to be implemented by child Action
      * which is later called to process all actions
      *
      * @param array ...$args
      * @return Collection|Model|array
      */
-    public abstract function take(...$args);
+    abstract public function take(...$args);
 
     /**
      * Dynamically resolve an Object and associated Action
@@ -39,14 +46,14 @@ abstract class Action
     public static function __callStatic($name, $arguments)
     {
         static::$namespace = config('owa.namespace');
+        static::$directory = config('owa.directory');
 
         static::setAvailableObjects();
-
         return static::isValidAction(static::getActionClass($name), $arguments);
     }
 
     /**
-     * Set available objects for dynamic resolution 
+     * Set available objects for dynamic resolution
      *
      * @return void
      */
@@ -54,7 +61,7 @@ abstract class Action
     {
         static::$objects = array_map(function ($element) {
             return str_replace(__DIR__ . DIRECTORY_SEPARATOR, '', $element);
-        }, glob(__DIR__ . '/*', GLOB_ONLYDIR));
+        }, glob(dirname(__DIR__, 4) . '/' . static::$directory . '/*', GLOB_ONLYDIR));
     }
 
     /**
@@ -68,15 +75,15 @@ abstract class Action
     {
         $hasActionSuffix = false;
 
-        if (class_exists($class) || $hasActionSuffix = class_exists($class . "Action")) {
-
-            $class = ($hasActionSuffix) ? $class . "Action" :  $class;
+        if (class_exists($class) || $hasActionSuffix = class_exists($class . 'Action')) {
+            $class = ($hasActionSuffix) ? $class . 'Action' : $class;
 
             return static::action(new $class, $arguments);
         } else {
             throw ActionNotFoundException::missingClass($class);
         }
     }
+
     /**
      * Call the take method for a valid action object and pass along the arguments
      *
@@ -118,7 +125,7 @@ abstract class Action
 
         if ($componentCount < 3) {
             throw ActionNotFoundException::invalidNameSyntax(implode('', $components));
-        } else if ($componentCount > 3) {
+        } elseif ($componentCount > 3) {
             array_shift($components);
             //Find possible matches
             $possibleMatches = static::addPossibilities($components, $componentCount - 2);
@@ -140,12 +147,11 @@ abstract class Action
         $ObjectAction = [];
 
         foreach ($possibleMatches[0] as $k => $possibleObject) {
-
             $ObjectAction = [$possibleObject, $possibleMatches[1][$k]];
 
-            $class = static::$namespace . "\\" . $possibleObject . "\Actions\\" . $possibleMatches[1][$k];
+            $class = static::$namespace . '\\' . $possibleObject . "\Actions\\" . $possibleMatches[1][$k];
 
-            if (class_exists($class) || class_exists($class . "Action")) {
+            if (class_exists($class) || class_exists($class . 'Action')) {
                 return $ObjectAction;
             }
         }
@@ -162,13 +168,12 @@ abstract class Action
      */
     public static function addPossibilities($components, $limit)
     {
-        $i = 0;
-        $matchString = implode('_', array_values(static::$objects));
+        $i               = 0;
+        $matchString     = implode('_', array_values(static::$objects));
         $possibleObjects = [];
         $possibleActions = [];
 
         while ($i < $limit) {
-
             $possibleObject  = implode('', $possibleObjects) . $components[$i];
 
             if (strpos($matchString, $possibleObject) > -1) {
