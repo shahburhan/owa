@@ -1,4 +1,4 @@
-# Laravel Object oriented design With Actions
+# Laravel Object Oriented Design With Actions
 Object oriented structural design for creating objects coupled together with actions  
 
 ## Highlights
